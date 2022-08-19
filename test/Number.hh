@@ -3,7 +3,7 @@
 #define  PARSER_HH
 
 #include <string>
-#include "assert.h"
+#include <assert.h>
 
 enum ValueType{
         INTEGER, 
@@ -15,12 +15,7 @@ enum ValueType{
 class Number {
 public:
     Number() : m_type(ValueType::VOID) {}
-    explicit Number(int val): m_type(ValueType::INTEGER), int_val(val) {}
-    explicit Number(float val) : m_type(ValueType::FLOAT), float_val(val) {}
-    explicit Number(char val) : m_type(ValueType::CHAR), char_val(val) {}
-    explicit Number(const std::string& val) : m_type(ValueType::STRING) {
-        init(string_val, val);
-    }
+    Number(const std::string& lit, ValueType type);
 
 public:
     int get_int() const {

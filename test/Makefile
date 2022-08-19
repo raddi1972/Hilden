@@ -1,36 +1,9 @@
-# This Makefile is designed to be simple and readable.  It does not
-# aim at portability.  It requires GNU Make.
 
-BASE = calc++
-BISON = bison
-CXX = g++
-FLEX = flex
+lex.yy.c: scanner.ll
+	flex scanner.ll
 
-all: $(BASE)
+build: lex.yy.c main.cc tokens.hh Parser.hh Parser.cc Number.hh Number.cc AST.hh
+	g++ lex.yy.c main.cc tokens.hh Parser.cc Number.cc -o hilden
 
-%.cc %.hh %.html %.gv: %.yy
-	$(BISON) $(BISONFLAGS) -o $*.cc $<
-
-%.cc: %.ll
-	$(FLEX) $(FLEXFLAGS) -o$@ $<
-
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c -o$@ $<
-
-$(BASE): $(BASE).o driver.o parser.o scanner.o Number.o
-	$(CXX) -o $@ $^
-
-$(BASE).o: parser.hh
-parser.o: parser.hh
-scanner.o: parser.hh
-
-run: $(BASE)
-	@echo "Type arithmetic expressions.  Quit with ctrl-d."
-	./$< -
-
-CLEANFILES =										\
-  $(BASE) *.o										\
-  parser.hh parser.cc parser.output parser.xml parser.html parser.gv location.hh	\
-  scanner.cc
 clean:
-	rm -f $(CLEANFILES)
+	rm hilden lex.yy.c

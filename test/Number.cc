@@ -1,6 +1,22 @@
-
 #include "Number.hh"
-#include <cassert>
+
+Number::Number(const std::string& lit, ValueType type)
+: m_type(type) {
+    switch(type) {
+    case ValueType::INTEGER:
+        int_val = std::stoi(lit);
+        break;
+    case ValueType::CHAR:
+        char_val = lit[1];
+        break;
+    case ValueType::FLOAT:
+        float_val = std::stof(lit);
+        break;
+    case ValueType::STRING:
+        string_val = lit;
+        break;
+    }
+}
 
 template <typename T> void Number::init(T &member, const T &val) {
   new (&member) std::string(val);
@@ -31,3 +47,5 @@ void Number::copy(const Number &copy) {
     break;
   }
 }
+
+
