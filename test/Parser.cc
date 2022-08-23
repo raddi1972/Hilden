@@ -19,16 +19,47 @@ void LexerWraper::printTokens() {
 }
 
 std::unique_ptr<ExpressionAST> Parser::ParseExpression() {
-    return ParseTerm();
+    std::cout << "ParseExpression" << std::endl;
+    return ParseSum();
+}
+
+std::unique_ptr<ExpressionAST> Parser::ParseSum() {
+    std::cout << "Parsing Sum" << std::endl;
+    auto term = ParseTerm();
+    return ParseSumA(std::move(term));
+}
+
+std::unique_ptr<BinaryOpAST> Parser::ParseSumA(std::unique_ptr<ExpressionAST> LHS) {
+    std::cout << "ParseSumA" << std::endl;
+    Tok nextTok = lex->peek(0);
+
+    if(nextTok.tok == Token::OP_PLUS)
+    {
+        Tok op = lex->next(); // consumes "+"
+        auto RHS = ParseTerm();
+        auto parsed = std::make_unique<BinaryOpAST>(std::move(LHS), std::move(RHS), op.val[0]);
+        return ParseSumA(std::move(parsed));
+    }
+
+    if(nextTok.tok == Token::OP_MINUS)
+    {
+        Tok op = lex->next(); // consumes "+"
+        auto RHS = ParseTerm();
+        auto parsed = std::make_unique<BinaryOpAST>(std::move(LHS), std::move(RHS), op.val[0]);
+        return ParseSumA(std::move(parsed));
+    }
 }
 
 std::unique_ptr<ExpressionAST> Parser::ParseTerm() {
+    std::cout << "ParseTerm" << std::endl;
     auto factor = ParseFactor(); // Getting the factor
     return ParseTermA(std::move(factor));
 }
 
 std::unique_ptr<BinaryOpAST> Parser::ParseTermA(std::unique_ptr<ExpressionAST> LHS) {
-    Tok nextTok = lex->peek(1);
+    Tok nextTok = lex->peek(0);
+    std::cout << "ParseTermA" << std::endl;
+
     if(nextTok.tok == Token::OP_MULT) 
     {
         Tok op = lex->next(); // consumes "*"
@@ -49,7 +80,8 @@ std::unique_ptr<BinaryOpAST> Parser::ParseTermA(std::unique_ptr<ExpressionAST> L
 }
 
 std::unique_ptr<ExpressionAST> Parser::ParseFactor() {
-    Tok nextTok = lex->peek(1);
+    std::cout << "ParseFactor" << std::endl;
+    Tok nextTok = lex->peek(0);
     if(nextTok.tok == Token::OPEN_CURLY) // parses "( expr )"
     {
         
@@ -76,6 +108,8 @@ std::unique_ptr<ExpressionAST> Parser::ParseFactor() {
 }
 
 std::unique_ptr<LiteralAST> Parser::ParseLiteral() {
+    std::cout << "ParseLiteral" << std::endl;
+
     Tok toParse = lex->next(); // Peeks the next token to check
     ValueType curType;
     switch (toParse.tok)
@@ -102,6 +136,8 @@ std::unique_ptr<LiteralAST> Parser::ParseLiteral() {
 }
 
 std::unique_ptr<ExpressionAST> Parser::ParseIdentifier() {
+    std::cout << "ParseIdentifier" << std::endl;
+
     auto var_name = lex->next().val;
 
     if(lex->peek(0).tok != OPEN_PAREN)

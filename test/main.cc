@@ -6,8 +6,9 @@ int main(int argc, char* argv[]) {
     if(argc >= 2) {
         Parser parser(argv[1]);
         parser.printTokens();
-        parser.ParseExpression();
-    } else {
+        auto parsed = parser.ParseExpression();
+        while(1);
+     } else {
         std::cout << "NHK" << std::endl;
         return -1;
     }

@@ -38,8 +38,7 @@ public:
 
     Tok next() {
         if(curtok + 1 < tokens.size()) {
-            curtok++;
-            return tokens[curtok + 1];
+            return tokens[curtok++];
         } else {
             return Tok("", Token::END_OF);
         }
@@ -68,6 +67,9 @@ public:
     std::unique_ptr<ExpressionAST> ParseFactor();
     std::unique_ptr<ExpressionAST> ParseTerm();
     std::unique_ptr<BinaryOpAST> ParseTermA(std::unique_ptr<ExpressionAST> LHS);
+
+    std::unique_ptr<ExpressionAST> ParseSum();
+    std::unique_ptr<BinaryOpAST> ParseSumA(std::unique_ptr<ExpressionAST> LHS);
 };
 
 
